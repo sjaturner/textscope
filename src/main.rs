@@ -37,5 +37,8 @@ fn main() -> Result<()> {
         .execute(Print("Hello"))?
         .execute(cursor::RestorePosition)?;
 
+    for line in std::io::stdin().lines() {
+        println!("line: {}", line.unwrap());
+    }
     Ok(())
 }
