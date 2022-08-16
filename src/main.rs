@@ -1,39 +1,23 @@
-use std::io::stdout;
+use std::io::{stdout, Write};
 
 use crossterm::{
-    cursor::{DisableBlinking, EnableBlinking, MoveTo, RestorePosition, SavePosition},
-    execute, style,
+    event, execute,
+    style::{Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor},
+    ExecutableCommand, Result,
 };
 
-fn work() {
-    // with macro
-    if false {
-        let _ = execute!(
-            stdout(),
-            SavePosition,
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            style::Print("\n"),
-            //      MoveTo(10, 10),
-            style::Print("Cheers you fuckers"),
-            EnableBlinking,
-            DisableBlinking,
-            RestorePosition,
-            style::Print("\n"),
-        );
-    }
-    stdout().execute(MoveTo(11, 11)).unwrap().execute(RestorePosition);
+fn main() -> Result<()> {
+    stdout()
+        .execute(SetForegroundColor(Color::Blue))?
+        .execute(SetBackgroundColor(Color::Red))?
+        .execute(Print("Styled text here.\n"))?;
 
-    //  stdout().execute(MoveTo(11, 11))?.execute(RestorePosition);
-}
+    stdout()
+        .execute(Print("Styled text here.\n"))?
+        .execute(Print("Styled text here.\n"))?
+        .execute(Print("Styled text here.\n"))?
+        .execute(Print("Styled text here.\n"))?
+        .execute(ResetColor)?;
 
-fn main() {
-    let _ = work();
+    Ok(())
 }
