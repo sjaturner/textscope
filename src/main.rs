@@ -1,6 +1,7 @@
 use clap::Parser;
 use crossterm::{cursor, style::Print, ExecutableCommand, Result};
 use std::io::stdout;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 /// This is a simple text scope which reads stdin and expect two input values per line
 /// The first input value is epoch
@@ -25,6 +26,12 @@ struct Args {
     step: f32,
 }
 
+fn now() -> f64 {
+    let now = SystemTime::now();
+    let since_the_epoch = now.duration_since(UNIX_EPOCH).expect("now is not a good time");
+    since_the_epoch.as_millis() as f64 / 1000.0
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
 
@@ -38,7 +45,12 @@ fn main() -> Result<()> {
         .execute(cursor::RestorePosition)?;
 
     for line in std::io::stdin().lines() {
-        println!("line: {}", line.unwrap());
+        let input = line.unwrap();
+        let input_values: Vec<_> = input.split(' ').collect();
+        let epoch: f64 = input_values[0].parse().unwrap();
+        let value: f64 = input_values[1].parse().unwrap();
+
+        println!("{}: {} {} {}", now(), epoch, value, input_values[0]);
     }
     Ok(())
 }
