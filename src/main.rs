@@ -1,23 +1,24 @@
 use std::io::{stdout, Write};
 
 use crossterm::{
-    event, execute,
+    event, 
+    execute,
+    cursor,
     style::{Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor},
-    ExecutableCommand, Result,
+    ExecutableCommand, 
+    Result,
 };
 
 fn main() -> Result<()> {
+    for _ in 1..=10 {
+        stdout()
+            .execute(Print("\n"))?;
+    }
     stdout()
-        .execute(SetForegroundColor(Color::Blue))?
-        .execute(SetBackgroundColor(Color::Red))?
-        .execute(Print("Styled text here.\n"))?;
-
-    stdout()
-        .execute(Print("Styled text here.\n"))?
-        .execute(Print("Styled text here.\n"))?
-        .execute(Print("Styled text here.\n"))?
-        .execute(Print("Styled text here.\n"))?
-        .execute(ResetColor)?;
+        .execute(cursor::SavePosition)?
+        .execute(cursor::MoveUp(3))?
+        .execute(Print("Hello"))?
+        .execute(cursor::RestorePosition)?;
 
     Ok(())
 }
