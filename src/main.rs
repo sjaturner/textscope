@@ -2,35 +2,36 @@ use std::io::stdout;
 
 use crossterm::{
     cursor::{DisableBlinking, EnableBlinking, MoveTo, RestorePosition, SavePosition},
-    style,
-    execute,
+    execute, style,
 };
 
 fn work() {
     // with macro
-    let _ = execute!(
-        stdout(),
-        SavePosition,
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-        style::Print("\n"),
-//      MoveTo(10, 10),
-        style::Print("Cheers you fuckers"),
-        EnableBlinking,
-        DisableBlinking,
-        RestorePosition,
-        style::Print("\n"),
-    );
+    if false {
+        let _ = execute!(
+            stdout(),
+            SavePosition,
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            style::Print("\n"),
+            //      MoveTo(10, 10),
+            style::Print("Cheers you fuckers"),
+            EnableBlinking,
+            DisableBlinking,
+            RestorePosition,
+            style::Print("\n"),
+        );
+    }
+    stdout().execute(MoveTo(11, 11)).unwrap().execute(RestorePosition);
 
-
-//  stdout().execute(MoveTo(11, 11))?.execute(RestorePosition);
+    //  stdout().execute(MoveTo(11, 11))?.execute(RestorePosition);
 }
 
 fn main() {
