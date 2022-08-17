@@ -1,13 +1,18 @@
 use clap::Parser;
 use crossterm::{cursor, style::Print, ExecutableCommand, Result};
+use signal_hook::flag;
 use std::collections::VecDeque;
 use std::io;
 use std::io::stdout;
+use std::io::Error;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 use std::sync::mpsc::TryRecvError;
+use std::sync::Arc;
+use std::thread;
+use std::time;
 use std::time::{SystemTime, UNIX_EPOCH};
-use std::{thread, time};
 
 /// This is a simple text scope which reads stdin and expect two input values per line
 /// The first input value is epoch
@@ -64,6 +69,9 @@ fn main() -> Result<()> {
 
     stdout().execute(cursor::SavePosition)?;
 
+    let term = Arc::new(AtomicBool::new(false));
+    flag::register(signal_hook::consts::SIGINT, Arc::clone(&term))?;
+
     let stdin_channel = spawn_stdin_channel();
     let mut deque = VecDeque::new();
     loop {
@@ -101,11 +109,14 @@ fn main() -> Result<()> {
             let (epoch, value) = elem;
             let seconds_since_base = epoch - base_epoch;
             let column = (seconds_since_base / args.step).clamp(0.0, args.columns as f64 - 1.0);
-
             let value = value.clamp(0.0, args.max_vals);
-            let row = (value / args.max_vals * args.rows as f64) as usize;
+            let row = (value / args.max_vals * args.rows as f64);
 
-            display[row][column as usize] = 'O';
+            display[row as usize][column as usize] = 'O';
+        }
+
+        if term.load(Ordering::Relaxed) {
+            break;
         }
 
         stdout()
@@ -118,5 +129,8 @@ fn main() -> Result<()> {
             stdout().execute(Print("\n"))?;
         }
     }
+
+    stdout().execute(cursor::RestorePosition)?;
+
     Ok(())
 }

@@ -9,3 +9,4 @@ edition = "2021"
 crossterm = "0.25.0"
 clap = { version = "3.2.17", features = ["derive"] }
 clap_derive = "3.2.17"
+signal-hook = { version = "0.3.14", features = ["extended-siginfo"] }
