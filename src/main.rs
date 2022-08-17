@@ -1,7 +1,12 @@
 use clap::Parser;
 use crossterm::{cursor, style::Print, ExecutableCommand, Result};
+use std::io;
 use std::io::stdout;
+use std::sync::mpsc;
+use std::sync::mpsc::Receiver;
+use std::sync::mpsc::TryRecvError;
 use std::time::{SystemTime, UNIX_EPOCH};
+use std::{thread, time};
 
 /// This is a simple text scope which reads stdin and expect two input values per line
 /// The first input value is epoch
@@ -28,8 +33,25 @@ struct Args {
 
 fn now() -> f64 {
     let now = SystemTime::now();
-    let since_the_epoch = now.duration_since(UNIX_EPOCH).expect("now is not a good time");
+    let since_the_epoch = now
+        .duration_since(UNIX_EPOCH)
+        .expect("now is not a good time");
     since_the_epoch.as_millis() as f64 / 1000.0
+}
+
+fn sleep(millis: u64) {
+    let duration = time::Duration::from_millis(millis);
+    thread::sleep(duration);
+}
+
+fn spawn_stdin_channel() -> Receiver<String> {
+    let (tx, rx) = mpsc::channel::<String>();
+    thread::spawn(move || loop {
+        let mut buffer = String::new();
+        io::stdin().read_line(&mut buffer).unwrap();
+        tx.send(buffer).unwrap();
+    });
+    rx
 }
 
 fn main() -> Result<()> {
@@ -38,19 +60,29 @@ fn main() -> Result<()> {
     for _ in 1..=args.rows {
         stdout().execute(Print("\n"))?;
     }
+
     stdout()
         .execute(cursor::SavePosition)?
         .execute(cursor::MoveUp(3))?
         .execute(Print("Hello"))?
         .execute(cursor::RestorePosition)?;
 
-    for line in std::io::stdin().lines() {
-        let input = line.unwrap();
-        let input_values: Vec<_> = input.split(' ').collect();
-        let epoch: f64 = input_values[0].parse().unwrap();
-        let value: f64 = input_values[1].parse().unwrap();
+    let stdin_channel = spawn_stdin_channel();
+    loop {
+        match stdin_channel.try_recv() {
+            Ok(line) => {
+                let input_values: Vec<_> = line.trim().split_whitespace().collect();
+                let epoch: f64 = input_values[0].parse().unwrap();
+                let value: f64 = input_values[1].parse().unwrap();
 
-        println!("{}: {} {} {}", now(), epoch, value, input_values[0]);
+                println!("{}: {} {} {}", now(), epoch, value, input_values[0]);
+            }
+            Err(TryRecvError::Empty) => { }
+            Err(TryRecvError::Disconnected) => {
+                break;
+            }
+        }
+        sleep(1000);
     }
     Ok(())
 }
