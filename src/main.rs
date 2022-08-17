@@ -1,5 +1,6 @@
 use clap::Parser;
 use crossterm::{cursor, style::Print, ExecutableCommand, Result};
+use std::collections::VecDeque;
 use std::io;
 use std::io::stdout;
 use std::sync::mpsc;
@@ -16,7 +17,7 @@ use std::{thread, time};
 struct Args {
     /// Number of columns to use
     #[clap(short, long, value_parser, default_value_t = 80)]
-    columns: u8,
+    columns: u16,
 
     /// The maximum value expected in the data column
     #[clap(short, long, value_parser, default_value_t = 256.0)]
@@ -24,11 +25,11 @@ struct Args {
 
     /// Number of rows to use
     #[clap(short, long, value_parser, default_value_t = 25)]
-    rows: u8,
+    rows: u16,
 
     /// Time step per column
     #[clap(short, long, value_parser, default_value_t = 1.0)]
-    step: f32,
+    step: f64,
 }
 
 fn now() -> f64 {
@@ -68,21 +69,41 @@ fn main() -> Result<()> {
         .execute(cursor::RestorePosition)?;
 
     let stdin_channel = spawn_stdin_channel();
+    let mut deque = VecDeque::new();
     loop {
         match stdin_channel.try_recv() {
             Ok(line) => {
                 let input_values: Vec<_> = line.trim().split_whitespace().collect();
                 let epoch: f64 = input_values[0].parse().unwrap();
                 let value: f64 = input_values[1].parse().unwrap();
+                deque.push_front((epoch, value));
 
                 println!("{}: {} {} {}", now(), epoch, value, input_values[0]);
             }
-            Err(TryRecvError::Empty) => { }
+            Err(TryRecvError::Empty) => {}
             Err(TryRecvError::Disconnected) => {
                 break;
             }
         }
-        sleep(1000);
+
+        let base_epoch = now() - args.step * args.columns as f64;
+        loop {
+            match deque.pop_back() {
+                Some((epoch, value)) => {
+                    if epoch > base_epoch {
+                        deque.push_front((epoch, value));
+                        break;
+                    }
+                }
+                None => {
+                    break;
+                }
+            }
+        }
+        println!("---");
+        for elem in &deque {
+            println!("{:?}", elem);
+        }
     }
     Ok(())
 }
