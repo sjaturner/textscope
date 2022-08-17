@@ -21,7 +21,7 @@ struct Args {
 
     /// The maximum value expected in the data column
     #[clap(short, long, value_parser, default_value_t = 256.0)]
-    max_vals: f32,
+    max_vals: f64,
 
     /// Number of rows to use
     #[clap(short, long, value_parser, default_value_t = 25)]
@@ -62,11 +62,7 @@ fn main() -> Result<()> {
         stdout().execute(Print("\n"))?;
     }
 
-    stdout()
-        .execute(cursor::SavePosition)?
-        .execute(cursor::MoveUp(3))?
-        .execute(Print("Hello"))?
-        .execute(cursor::RestorePosition)?;
+    stdout().execute(cursor::SavePosition)?;
 
     let stdin_channel = spawn_stdin_channel();
     let mut deque = VecDeque::new();
@@ -77,8 +73,6 @@ fn main() -> Result<()> {
                 let epoch: f64 = input_values[0].parse().unwrap();
                 let value: f64 = input_values[1].parse().unwrap();
                 deque.push_front((epoch, value));
-
-                println!("{}: {} {} {}", now(), epoch, value, input_values[0]);
             }
             Err(TryRecvError::Empty) => {}
             Err(TryRecvError::Disconnected) => {
@@ -100,9 +94,28 @@ fn main() -> Result<()> {
                 }
             }
         }
-        println!("---");
+
+        let mut display = vec![vec!['#'; args.columns as usize]; args.rows as usize];
+
         for elem in &deque {
-            println!("{:?}", elem);
+            let (epoch, value) = elem;
+            let seconds_since_base = epoch - base_epoch;
+            let column = (seconds_since_base / args.step).clamp(0.0, args.columns as f64 - 1.0);
+
+            let value = value.clamp(0.0, args.max_vals);
+            let row = (value / args.max_vals * args.rows as f64) as usize;
+
+            display[row][column as usize] = 'O';
+        }
+
+        stdout()
+            .execute(cursor::RestorePosition)?
+            .execute(cursor::MoveUp(args.rows))?;
+
+        for line in display {
+            let s: String = line.into_iter().collect();
+            stdout().execute(Print(s))?;
+            stdout().execute(Print("\n"))?;
         }
     }
     Ok(())
