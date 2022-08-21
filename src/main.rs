@@ -48,7 +48,10 @@ fn spawn_stdin_channel() -> Receiver<String> {
     thread::spawn(move || loop {
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer).unwrap();
-        tx.send(buffer).unwrap();
+        match tx.send(buffer) {
+            Ok(_) => { },
+            Err(_) => { std::process::exit(0) },
+        }
     });
     rx
 }
