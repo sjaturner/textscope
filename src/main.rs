@@ -103,7 +103,7 @@ fn main() -> Result<()> {
             }
         }
 
-        let mut display = vec![vec![' '; args.columns as usize]; args.rows as usize];
+        let mut display = vec![vec![' '; (args.columns + 1) as usize]; (args.rows + 1) as usize];
 
         for elem in display[0].iter_mut() {
             *elem = '-';
@@ -125,11 +125,14 @@ fn main() -> Result<()> {
         for elem in &deque {
             let (epoch, value) = elem;
             let seconds_since_base = epoch - base_epoch;
-            let column = (seconds_since_base / args.step).clamp(0.0, args.columns as f64 - 1.0);
+            let column = (seconds_since_base / args.step) as i32;
             let value = value.clamp(0.0, args.max_vals);
-            let row = value / args.max_vals * args.rows as f64;
+            let row =
+                ((value / args.max_vals * args.rows as f64) as i32).clamp(0, args.rows as i32 - 1);
 
-            display[row as usize][column as usize] = '+';
+            if column >= 0 {
+                display[row as usize][column as usize] = '+';
+            }
         }
 
         if term.load(Ordering::Relaxed) {
