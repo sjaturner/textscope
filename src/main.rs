@@ -4,11 +4,11 @@ use signal_hook::flag;
 use std::collections::VecDeque;
 use std::io;
 use std::io::stdout;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 use std::sync::mpsc::TryRecvError;
+use std::sync::Arc;
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -49,8 +49,8 @@ fn spawn_stdin_channel() -> Receiver<String> {
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer).unwrap();
         match tx.send(buffer) {
-            Ok(_) => { },
-            Err(_) => { std::process::exit(0) },
+            Ok(_) => {}
+            Err(_) => std::process::exit(0),
         }
     });
     rx
