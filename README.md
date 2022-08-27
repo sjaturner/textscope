@@ -208,6 +208,6 @@ you might want to force the pipeline elements to flush.
 
     I wondered about that too - perhaps I could adapt this to take multiple values on each line. It'd be up to you to scale all of them though ... Might try at some point.
     
-* Would this look nicer if you used sixel plots
+* Would this look nicer if you used sixel plots?
 
     That would be great, but my terminal multiplexer (tmux) destroys sixel ...
