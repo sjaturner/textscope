@@ -10,6 +10,7 @@ It's a bit like a command line oscilloscope.
 * You are not great at visualising numbers as graphs, particularly when the readings arrive fast.
 * You are logged on to a remote machine and you are too lazy to set up X window, Octave or Gnuplot.
 * You just want a quick look at the data and you are not at all fussy about axis labels, etc.
+* You don't want the graph to scroll up the screen - because that would be really easy to do anyway :-)
 
 ## Rust version
 
