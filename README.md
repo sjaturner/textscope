@@ -2,14 +2,25 @@
 
 # This is textscope, a minimal text based scope trace for streams of data where each line contains an epoch and value
 
-It is really just an excuse to write some Rust.
-
-Use case:
+## Use case
 
 * You are monitoring a changing value in a stream of text.
 * You are not great at visualising numbers as graphs, particularly when the readings arrive fast.
 * You are logged on to a remote machine and you are too lazy to set up X window, Octave or Gnuplot.
 * You just want a quick look at the data and you are not at all fussy about axis labels, etc.
+
+## Rust version
+
+This is really just an excuse to write some Rust.
+
+I appear to be using this:
+
+    :; cargo --version
+    cargo 1.63.0 (fd9c4297c 2022-07-01)
+
+I installed Rust using the method described here:
+
+    https://www.rust-lang.org/tools/install
 
 ## Expected input format
 
@@ -169,3 +180,17 @@ a bit of maths on an input stream without much trouble.
 Interestingly, with this running at a higher rate, the right hand edge of the plotted value starts a little
 before the right hand limit of the plot. I think that's buffering in AWK! If you want to do higher speed plots
 you might want to force the pipeline elements to flush.
+
+## Imaginary Frequently Asked Questions and unhelpful answers
+
+* Does this work on Windows?
+
+    I've not tried that. The terminal handling claims to be cross platform but I don't know about the signal handling code. Send a PR if you can make it work.
+
+* Where are the nice axis lables and other decorations? How can I tell what the scale and offset are?
+
+    I'm assuming you scaled and offset the data yourself ...
+
+* Can I plot more than one trace?
+
+    I wondered about that too - perhaps I could adapt this to take multiple values on each line. It'd be up to you to scale all of them though ... Might try at some point.
