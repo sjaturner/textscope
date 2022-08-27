@@ -128,7 +128,7 @@ fn main() -> Result<()> {
             let column = (seconds_since_base / args.step) as i32;
             let value = value.clamp(0.0, args.max_vals);
             let row =
-                ((value / args.max_vals * args.rows as f64) as i32).clamp(0, args.rows as i32 - 1);
+                (((args.max_vals - value) / args.max_vals * args.rows as f64) as i32).clamp(0, args.rows as i32 - 1);
 
             if column >= 0 {
                 display[row as usize][column as usize] = '+';
