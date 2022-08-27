@@ -1,6 +1,8 @@
+![](textscope.gif)
+
 # This is textscope, a minimal text based scope trace for streams of data where each line contains an epoch and value
 
-This is really just an excuse to write some Rust.
+It is really just an excuse to write some Rust.
 
 Use case:
 
