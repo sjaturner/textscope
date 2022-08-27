@@ -101,7 +101,7 @@ you might want to paste that somewhere ... To improve matters, you can do this:
 
     :; stty -echoctl
 
-If you are really attached to seeing ^C, etc. you can try this after your finished:
+If you are really attached to seeing ^C, etc. you can try this after you're finished:
 
     ;; stty sane
 
