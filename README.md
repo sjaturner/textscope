@@ -14,7 +14,7 @@ It's a bit like a command line oscilloscope.
 
 ## Rust version
 
-This is really just an excuse to write some Rust.
+This is just an excuse to write some Rust.
 
 I appear to be using this:
 
@@ -30,6 +30,7 @@ I installed Rust using the method described here:
 I'm using Linux (and I'm not sure that this would work on Windows because of the signal handling ...)
 
     git clone git@github.com:sjaturner/textscope.git
+    cd textscope
     cargo build
     for y in $(seq 1 2000) ; do echo $(( y % 0xff )) ; sleep 0.005 ; done | ts %.s | target/debug/textscope -s 0.01
 
@@ -38,7 +39,7 @@ when you're bored of that.
 
 ## Expected input format
 
-I will build on the following examples:
+I will build on the following example:
 
 You might have a simple stream of values, lacking a timestamp:
 
@@ -67,7 +68,7 @@ In which case you can add an epoch prefix by adding on to the end of the pipe ..
 
 I'll refer to that second line item as the value from now on.
 
-So much for input data ... Let's try some plots.
+So much for input data ... Let's try some plots!
 
 ## Altering the values to work with textscope
 
