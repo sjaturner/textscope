@@ -2,6 +2,8 @@
 
 # This is textscope, a minimal text based scope trace for streams of data where each line contains an epoch and value
 
+It's a bit like a command line oscilloscope.
+
 ## Use case
 
 * You are monitoring a changing value in a stream of text.
@@ -24,7 +26,7 @@ I installed Rust using the method described here:
 
 ## Build instructions
 
-I'm using Linx (and I'm not sure that this would work on Windows because of the signal handling ...)
+I'm using Linux (and I'm not sure that this would work on Windows because of the signal handling ...)
 
     git clone git@github.com:sjaturner/textscope.git
     cargo build
