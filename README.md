@@ -7,13 +7,13 @@ Use case:
 * You are monitoring a changing value in a stream of text.
 * You are not great at visualising numbers as graphs, particularly when the readings arrive fast.
 * You are logged on to a remote machine and you are too lazy to set up X window, Octave or Gnuplot.
-* You just want a quick look at the data and you are not at all fussy about axis lables, etc.
+* You just want a quick look at the data and you are not at all fussy about axis labels, etc.
 
 ## Expected input format
 
 I will build on the following examples:
 
-You might have a simple stream of values, lacking a timstamp:
+You might have a simple stream of values, lacking a timestamp:
 
     :; count=0;while true; do echo $(( $count % 5 )) ; count=$(( $count + 1 )) ; sleep 0.2 ; done
     0
