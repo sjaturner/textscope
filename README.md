@@ -22,6 +22,17 @@ I installed Rust using the method described here:
 
     https://www.rust-lang.org/tools/install
 
+## Build instructions
+
+I'm using Linx (and I'm not sure that this would work on Windows because of the signal handling ...)
+
+    git clone git@github.com:sjaturner/textscope.git
+    cargo build
+    for y in $(seq 1 2000) ; do echo $(( y % 0xff )) ; sleep 0.005 ; done | ts %.s | target/debug/textscope -s 0.01
+
+The last command is a quick test - you should see a ramp waveform scrolling across the screen: hit CTRL-C 
+when you're bored of that.
+
 ## Expected input format
 
 I will build on the following examples:
